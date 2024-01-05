@@ -4,7 +4,7 @@
 
 ## Structure
 
-## Setup
+## Setup for U-Net and Otsu segmentation
 ### Download data
 We provide our data and model checkpoints at: drive.
 Extract the images to `./data` and models to `./trained_models`.
