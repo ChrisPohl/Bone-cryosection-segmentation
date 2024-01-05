@@ -1,6 +1,6 @@
 # Quantitative analysis of trabecular bone tissue cryosections via a fully automated neural network-based approach
-<img src="https://github.com/ChrisPohl/Automated-Tissue-Detection/raw/main/fig/overview.tif" width=70% height=70%>
-<img src="https://github.com/ChrisPohl/Automated-Tissue-Detection/raw/main/fig/results.tif" width=70% height=70%>
+![Graphical overview](fig/overview.png)
+![Graphical results](fig/results.png)
 
 ## Structure
 
