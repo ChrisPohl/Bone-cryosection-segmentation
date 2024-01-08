@@ -1,4 +1,6 @@
 lightning_logs
+trained_models
 patches
 data
 *.ini
+*.pyc
