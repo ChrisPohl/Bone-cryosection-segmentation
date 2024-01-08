@@ -4,11 +4,11 @@ import numpy as np
 import torch
 import torchvision.transforms as T
 from natsort import natsorted
-from PIL import Image
 from skimage.filters.thresholding import threshold_otsu
-from tifffile import imwrite
+from tifffile import imread, imwrite
 from tqdm import tqdm
 
+from unet_classifier.data import get_positions
 from unet_classifier.model import LitUNet
 
 transform_val = T.ToTensor()
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     # path to pretrained model
     pretrained_model = base_dir / "trained_models" / "unet.ckpt"
-    model = LitUNet.load_from_checkpoint(pretrained_model).half()
+    model = LitUNet.load_from_checkpoint(pretrained_model).eval()
 
     impaths = natsorted(
         {
@@ -31,20 +31,30 @@ if __name__ == "__main__":
     )
 
     print("Segmenting images.")
-    for fp in tqdm(impaths):
-        img = Image.open(fp)
-        img_np = np.asarray(img)
+    for fp in impaths:
+        print("Segmenting", fp.name)
+
+        img = imread(fp)
+        positions = get_positions(img, 512, 512 // 2)
 
         # segmentation unet
-        with torch.no_grad():
-            x = transform_val(img).unsqueeze(0).to("cuda").half()
-            y = model(x)
+        y_unet = torch.zeros(img[:, :, 0].shape, dtype=torch.float32)
+        for pos in tqdm(positions):
+            ypos, xpos = pos
+            ymin, ymax = ypos.start, ypos.stop
+            xmin, xmax = xpos.start, xpos.stop
 
-            msk_unet = y[0, 0].cpu().numpy() > 0.9
+            with torch.no_grad():
+                x = transform_val(img[pos]).unsqueeze(0).to("cuda")
+                y = model(x).sigmoid().cpu()
+
+            y_unet[pos] = torch.maximum(y_unet[pos], y)
+
+        msk_unet = np.array(y_unet > 0.8)
 
         # segmentation otsu
-        thr = threshold_otsu(img_np[:, :, 1])
-        msk_otsu = img_np[:, :, 1] >= thr
+        thr = threshold_otsu(img[:, :, 1])
+        msk_otsu = img[:, :, 1] >= thr
 
         imwrite(fp.with_stem(fp.stem + "_unet"), msk_unet)
         imwrite(fp.with_stem(fp.stem + "_otsu"), msk_otsu)
