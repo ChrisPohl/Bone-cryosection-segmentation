@@ -14,7 +14,7 @@ Extract the images to `./data` and models to `./trained_models`.
 
 ### Installation
 
-For training and inference we use `pytorch`, please install it following the instructions on [their website](https://pytorch.org/get-started/locally/). All other dependencies may be installed using `pip install -r requirements.txt`.
+We recommend creating a [conda environment](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html). For training and segmentation we use `pytorch`. Please install it following the instructions on [their website](https://pytorch.org/get-started/locally/). All other dependencies may be installed using `pip install -r requirements.txt`.
 
 ### Usage
 
