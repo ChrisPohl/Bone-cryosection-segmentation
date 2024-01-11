@@ -18,9 +18,14 @@ if __name__ == "__main__":
     base_dir = Path("")
     data_dir = base_dir / "data" / "test"
 
+    has_gpu = torch.cuda.is_available()
+    map_location = "cuda" if has_gpu else "cpu"
+
     # path to pretrained model
     pretrained_model = base_dir / "trained_models" / "unet.ckpt"
-    model = LitUNet.load_from_checkpoint(pretrained_model).eval()
+    model = LitUNet.load_from_checkpoint(
+        pretrained_model, map_location=map_location
+    ).eval()
 
     impaths = natsorted(
         {
@@ -45,7 +50,7 @@ if __name__ == "__main__":
             xmin, xmax = xpos.start, xpos.stop
 
             with torch.no_grad():
-                x = transform_val(img[pos]).unsqueeze(0).to("cuda")
+                x = transform_val(img[pos]).unsqueeze(0).to(map_location)
                 y = model(x).sigmoid().cpu()
 
             y_unet[pos] = torch.maximum(y_unet[pos], y)
