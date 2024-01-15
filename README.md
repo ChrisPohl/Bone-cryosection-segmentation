@@ -25,7 +25,7 @@ To run simply copy the script into the Qupath command window or into the QuPath 
 
 ### Download data
 
-We provide our data and model checkpoints at: drive.
+We provide our data and model checkpoints at: [drive](https://drive.google.com/drive/folders/1_EnP-1o8nJR5WGvvrgxPYv2ielXNLhii?usp=sharing)
 Extract the images to `./data` and models to `./trained_models`.
 
 ### Installation
